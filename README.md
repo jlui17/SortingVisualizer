@@ -3,3 +3,5 @@ A sorting visualizer created using ReactJS
 
 ## Sorting Methods
 - Insertion Sort
+
+testing more changes to git
