@@ -62,6 +62,20 @@ class SortingVisualizer extends react.Component {
 
     // ANIMATION HELPERS
     
+    // swaps two items in array depending on direction
+    step(direction, i, arr) {
+        if (direction === "left") {
+            const temp = arr[i];
+            arr[i] = arr[i-1];
+            arr[i-1] = temp;
+        }
+        if (direction === "right") {
+            const temp = arr[i];
+            arr[i] = arr[i+1];
+            arr[i+1] = temp;
+        }
+    }
+
     // animate pushing 1 bar to left
     async stepDown(start, end, bars) {
         const numsArr = [...this.state.nums];
@@ -71,10 +85,8 @@ class SortingVisualizer extends react.Component {
             await this.sleep((100 - this.state.speed)/2);
             // change bar back to normal color
             bars[i].style.backgroundColor = '#ECD6A2';
-            // swap ith num and ith-1 num
-            const temp = numsArr[i];
-            numsArr[i] = numsArr[i-1];
-            numsArr[i-1] = temp;
+            // step left (down)
+            this.step("left", i, numsArr)
             // render change
             this.setState({speed: this.state.speed,
                            nums: numsArr});
@@ -88,6 +100,7 @@ class SortingVisualizer extends react.Component {
         // step down
         let j = left;
         let i = right
+
         while (i !== left) {
             // highlight bars to be swapped
             bars[i].style.backgroundColor = 'black';
@@ -96,7 +109,8 @@ class SortingVisualizer extends react.Component {
             // change bars back to normal color
             bars[i].style.backgroundColor = '#ECD6A2';
             bars[j].style.backgroundColor = '#ECD6A2';
-            // when both bars are beside each other or on each other
+            // when both bars will colide in next step
+
             if (i === j + 2 && i > j) {
                 let temp = numsArr[i];
                 numsArr[i] = numsArr[j];
@@ -107,26 +121,23 @@ class SortingVisualizer extends react.Component {
                     nums: numsArr});
                 continue
             }
-            else if (i === j+1 && i > j) {
+            // when bars are beside each other
+            else if (i === j+1) {
                 // push right num left
-                let temp = numsArr[i];
-                numsArr[i] = numsArr[i-1];
-                numsArr[i-1] = temp;
+                this.step("left", i, numsArr);
             } else {
                 // push right num left
-                let temp = numsArr[i];
-                numsArr[i] = numsArr[i-1];
-                numsArr[i-1] = temp;
+                this.step("left", i, numsArr);
                 // push left num right
-                temp = numsArr[j];
-                numsArr[j] = numsArr[j+1];
-                numsArr[j+1] = temp;
+                this.step("right", j, numsArr);
             }
             i--
             j++;
             this.setState({speed: this.state.speed,
                            nums: numsArr});
         }
+
+        // if j not in right spot push j until in right spot
         while (j !== right) {
             bars[j].style.backgroundColor = 'black';
             await this.sleep((100 - this.state.speed)/4);
