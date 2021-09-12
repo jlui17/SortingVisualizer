@@ -298,7 +298,6 @@ class SortingVisualizer extends react.Component {
                         )
                     })}
                 </div>
-                <button onClick={() => this.testSortingAlgorithm()}>Test</button>
             </div>
         )
     }
