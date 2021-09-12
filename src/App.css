@@ -1,7 +1,79 @@
+:root {
+    --orange: #FFEABA;
+    --active: #BACFFF;
+    --nonActive: #FFBAF2;
+}
+
 body {
     display: flex;
     justify-content: center;
     align-items: center;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-size: 100%;
+    vertical-align: baseline;
+    background: transparent;
+}
+
+button,p {
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.25rem;
+}
+
+p {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-size: 100%;
+    vertical-align: baseline;
+    background: transparent;
+}
+
+#separator {
+    font-size: 1.75rem;
+}
+
+.sortingUI {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.navBar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1.5vh;
+    width: 100vw;
+    background-color: var(--orange);
+    padding: 5px;
+}
+
+button {
+    border: none;
+    margin: 5px;
+    background-color: transparent;
+}
+
+button:hover {
+    color: var(--active);
+}
+
+.active {
+    color: var(--active);
+    font-weight: bold;
+}
+
+.nonActive {
+    color: var(--nonActive);
+}
+
+.nonActive:hover {
+    color: var(--nonActive);
 }
 
 .bar {

@@ -5,25 +5,29 @@ class SortingVisualizer extends react.Component {
     constructor() {
         super();
         this.state = {
+            busy: false,
+            activeSort: "",
             speed: 100,
             nums: []
         }
     }
 
-    componentDidMount() {
-        this.generateNewNums()
-    }
+    // HELPER FUNCTIONS
 
+    // reset nums
     generateNewNums() {
+        if (this.state.busy) return;
         let numsArr = [];
         for (let i = 0; i < 100; i++) {
             numsArr.push(Math.floor(Math.random() * 600 + 5))
         };
-        this.setState({speed: this.state.speed,
-                        nums: numsArr});
+        this.setState({
+            busy: false,
+            speed: this.state.speed,
+            nums: numsArr,
+            activeSort: this.state.activeSort
+        });
     }
-
-    // HELPER FUNCTIONS
 
     // Checks if arr1 is equal to arr2
     arraysAreEqual(arr1, arr2) {
@@ -82,14 +86,17 @@ class SortingVisualizer extends react.Component {
         for (let i = start; i > end; i--) {
             // hightlight bar to be moved down
             bars[i].style.backgroundColor = 'black';
-            await this.sleep((100 - this.state.speed)/2);
+            await this.sleep((100 - this.state.speed));
             // change bar back to normal color
             bars[i].style.backgroundColor = '#ECD6A2';
             // step left (down)
             this.step("left", i, numsArr)
             // render change
-            this.setState({speed: this.state.speed,
-                           nums: numsArr});
+            this.setState({
+                busy: this.state.busy,
+                speed: this.state.speed,
+                activeSort: this.state.activeSort,
+                nums: numsArr});
         }
 
         return new Promise(resolve => setTimeout(resolve, this.sleep((100 - this.state.speed)/2)));
@@ -105,7 +112,7 @@ class SortingVisualizer extends react.Component {
             // highlight bars to be swapped
             bars[i].style.backgroundColor = 'black';
             bars[j].style.backgroundColor = 'black';
-            await this.sleep((100 - this.state.speed)/4);
+            await this.sleep((100 - this.state.speed)/2);
             // change bars back to normal color
             bars[i].style.backgroundColor = '#ECD6A2';
             bars[j].style.backgroundColor = '#ECD6A2';
@@ -117,7 +124,10 @@ class SortingVisualizer extends react.Component {
                 numsArr[j] = temp;
                 i -= 2;
                 j += 2;
-                this.setState({speed: this.state.speed,
+                this.setState({
+                    busy: this.state.busy,
+                    speed: this.state.speed,
+                    activeSort: this.state.activeSort,
                     nums: numsArr});
                 continue
             }
@@ -133,21 +143,28 @@ class SortingVisualizer extends react.Component {
             }
             i--
             j++;
-            this.setState({speed: this.state.speed,
-                           nums: numsArr});
+            this.setState({
+                busy: this.state.busy,
+                speed: this.state.speed,
+                activeSort: this.state.activeSort,
+                nums: numsArr});
         }
 
         // if j not in right spot push j until in right spot
         while (j !== right) {
             bars[j].style.backgroundColor = 'black';
-            await this.sleep((100 - this.state.speed)/4);
+            await this.sleep((100 - this.state.speed)/2);
             bars[j].style.backgroundColor = '#ECD6A2';
             const temp = numsArr[j];
             numsArr[j] = numsArr[j+1];
             numsArr[j+1] = temp;
             j++;
-            this.setState({speed: this.state.speed,
-                nums: numsArr});
+            this.setState({
+                busy: this.state.busy,
+                speed: this.state.speed,
+                activeSort: this.state.activeSort,
+                nums: numsArr
+            });
         }
 
         return new Promise(resolve => setTimeout(resolve, this.sleep((100 - this.state.speed)/4)));
@@ -158,13 +175,25 @@ class SortingVisualizer extends react.Component {
     // SELECTION SORT ANIMATIONS
 
     async animateSelectionSort(animations, bars) {
+        this.setState({
+            busy: true,
+            activeSort: "selection",
+            speed: this.state.speed,
+            nums: this.state.nums
+        });
         for (let i = 0; i < animations.length; i++) {
             await this.swap(animations[i].left, animations[i].right, bars);
         }
-        // await this.swap(animations[0].left, animations[0].right, bars);
+        this.setState({
+            busy: false,
+            activeSort: "",
+            speed: this.state.speed,
+            nums: this.state.nums
+        });
     }
 
     selectionSort() {
+        if (this.state.busy) return;
         const selectionSorted = SortingAlgorithms.selectionSort(this.state.nums)
         const jsSorted = [...this.state.nums].sort((a,b) => a-b)
         
@@ -182,14 +211,27 @@ class SortingVisualizer extends react.Component {
 
     // driver function for insertion sort animation
     async animateInsertionSort(animations, bars) {
+        this.setState({
+            busy: true,
+            speed: this.state.speed,
+            nums: this.state.nums,
+            activeSort: "insertion"
+        });
         for (let i = 0; i < animations.length; i++) {
             await this.stepDown(animations[i].start, animations[i].end, bars);
         }
+        this.setState({
+            busy: false,
+            speed: this.state.speed,
+            nums: this.state.nums,
+            activeSort: ""
+        });
     }
 
     // sorts arrays using insertion sort, checks if the sort is correct,
     // then calls animationInsertionSort and passes animations to do
     insertionSort() {
+        if (this.state.busy) return;
         const insertionSorted = SortingAlgorithms.insertionSort(this.state.nums)
         const jsSorted = [...this.state.nums].sort((a,b) => a-b)
         
@@ -204,19 +246,44 @@ class SortingVisualizer extends react.Component {
 
 
     // RENDERING 
+
+    setClass(id) {
+        if (this.state.activeSort === id) return "active";
+        if (this.state.activeSort === "") return "";
+        if (this.state.activeSort !== id) return "nonActive";
+    }
+
+    componentDidMount() {
+        this.generateNewNums()
+    }
     
     render() {
         return (
-            <div className="bars">
-                {this.state.nums.map((num,i) => {
-                    return (
-                        <div className="bar" key={i} style={{height: `${num}px`}}>
-                        </div>
-                    )
-                })}
-                <button onClick={() => this.generateNewNums()}>Reset</button>
-                <button onClick={() => this.insertionSort()}>Insertion Sort</button>
-                <button onClick={() => this.selectionSort()}>Selection Sort</button>
+            <div className="sortingUI">
+                <div className="navBar">
+                    <button className={this.setClass("reset")} onClick={() => {
+                        this.generateNewNums()
+                    }}>Reset</button>
+                    <p id="separator">|</p>
+                    <div>
+                        <button className={this.setClass("insertion")} id="insertion" onClick={() => {
+                            this.insertionSort()
+                        }}>Insertion Sort</button>
+                        <button className={this.setClass("selection")} id="selection" onClick={() => {
+                            this.selectionSort()
+                        }}>Selection Sort</button>
+                    </div>
+                    <p id="separator">|</p>
+                    slider
+                </div>
+                <div className="bars">
+                    {this.state.nums.map((num,i) => {
+                        return (
+                            <div className="bar" key={i} style={{height: `${num}px`}}>
+                            </div>
+                        )
+                    })}
+                </div>
                 <button onClick={() => this.testSortingAlgorithm()}>Test</button>
             </div>
         )
