@@ -5,3 +5,5 @@ A sorting visualizer created using ReactJS
 - Insertion Sort
 - Selection Sort
 - Quick sort (Coming Soon)
+
+## Binary Trees (Coming Soon)
