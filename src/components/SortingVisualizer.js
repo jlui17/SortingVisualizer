@@ -1,5 +1,6 @@
 import react from 'react'
 import * as SortingAlgorithms from './SortingAlgorithms'
+import Slider from './Slider'
 
 class SortingVisualizer extends react.Component {
     constructor() {
@@ -10,6 +11,7 @@ class SortingVisualizer extends react.Component {
             speed: 100,
             nums: []
         }
+        this.changeSpeed = this.changeSpeed.bind(this);
     }
 
     // HELPER FUNCTIONS
@@ -58,6 +60,15 @@ class SortingVisualizer extends react.Component {
             } else 
             console.log("false");
         };
+    }
+
+    changeSpeed(speed) {
+        this.setState({
+            busy: this.state.busy,
+            speed: speed,
+            nums: this.state.nums,
+            activeSort: this.state.activeSort
+        })
     }
 
     // HELPER FUNCTIONS END
@@ -274,7 +285,10 @@ class SortingVisualizer extends react.Component {
                         }}>Selection Sort</button>
                     </div>
                     <p id="separator">|</p>
-                    slider
+                    <div id="slider">
+                        <label>Speed</label>
+                        <Slider speed={this.state.speed} changeSpeed={this.changeSpeed}></Slider>
+                    </div>
                 </div>
                 <div className="bars">
                     {this.state.nums.map((num,i) => {

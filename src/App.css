@@ -17,7 +17,7 @@ body {
     background: transparent;
 }
 
-button,p {
+button,p,label {
     font-family: 'Roboto', sans-serif;
     font-size: 1.25rem;
 }
@@ -81,4 +81,32 @@ button:hover {
     width: 3px;
     margin: 0 1px;
     background-color: #ECD6A2;
+}
+
+#slider {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#slider label {
+    margin: 5px;
+}
+
+#slider input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+}
+
+#slider input[type=range]::-webkit-slider-runnable-track {
+    background: var(--active);
+    height: 14px;
+}
+#slider input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    border: 1px solid #000000;
+    height: 14px;
+    width: 10px;
+    background: black;
+    cursor: pointer;
 }
