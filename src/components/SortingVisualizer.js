@@ -24,7 +24,7 @@ class SortingVisualizer extends react.Component {
         if (this.state.busy) return;
         let numsArr = [];
         for (let i = 0; i < 100; i++) {
-            numsArr.push(Math.floor(Math.random() * 600 + 5))
+            numsArr.push(Math.floor(Math.random() * 600 + 30))
         };
         this.setState({
             busy: false,
@@ -287,10 +287,17 @@ class SortingVisualizer extends react.Component {
         if (this.state.activeSort === "selection") return "Selection Sort";
     }
 
-    setClass(id) {
-        if (this.state.activeSort === id) return "active";
-        if (this.state.activeSort === "") return "";
-        if (this.state.activeSort !== id) return "nonActive";
+    setClass(id, type) {
+        if (type === "button") {
+            if (this.state.activeSort === id) return "active";
+            if (this.state.activeSort === "") return "";
+            if (this.state.activeSort !== id) return "nonActive";
+        }
+
+        if (type === "text") {
+            if (this.state.activeSort === id) return "show";
+            if (this.state.activeSort !== id) return "noShow";
+        }
     }
 
     componentDidMount() {
@@ -301,19 +308,19 @@ class SortingVisualizer extends react.Component {
         return (
             <div className="sortingUI">
                 <div className="navBar">
-                    <button className={this.setClass("reset")} onClick={() => {
+                    <button className={this.setClass("reset", "button")} onClick={() => {
                         this.generateNewNums()
                     }}>Reset</button>
-                    <p id="separator">|</p>
+                    <span id="separator">|</span>
                     <div>
-                        <button className={this.setClass("insertion")} id="insertion" onClick={() => {
+                        <button className={this.setClass("insertion", "button")} id="insertion" onClick={() => {
                             this.insertionSort()
                         }}>Insertion Sort</button>
-                        <button className={this.setClass("selection")} id="selection" onClick={() => {
+                        <button className={this.setClass("selection", "button")} id="selection" onClick={() => {
                             this.selectionSort()
                         }}>Selection Sort</button>
                     </div>
-                    <p id="separator">|</p>
+                    <span id="separator">|</span>
                     <div id="slider">
                         <label>Speed</label>
                         <Slider speed={this.state.speed} changeSpeed={this.changeSpeed}></Slider>
@@ -322,10 +329,49 @@ class SortingVisualizer extends react.Component {
                 <div className="bars">
                     {this.state.nums.map((num,i) => {
                         return (
-                            <div className="bar" key={i} style={{height: `${num}px`}}>
+                            <div className="bar" key={i} style={{height: `${num*(4/5)}px`}}>
                             </div>
                         )
                     })}
+                </div>
+
+                <div className={this.setClass("insertion", "text")}>
+                    <h1>Insertion Sort</h1>
+                    <p>The insertion sort algorithm works basically like how you would sort cards:</p>
+                    <ol>
+                        <li>Take the first one set it to the side.</li>
+                        <li>Take the next one and put it before the first card if its smaller or after if its bigger.</li>
+                        <li>Take the next card find the spot where its bigger than the card before it and smaller than the card after it.</li>
+                        <li>Repeat step 3 until the whole deck is sorted.</li>
+                    </ ol>
+
+                    <p>The algorithm splits the array into 2 parts - sorted and unsorted. The first value from the unsorted part is 
+                        picked and placed in the spot where it's bigger than the one on its left and smaller than the one on the right 
+                        (vice versa if sorting in decreasing order). <br /> <br/>
+                        Here's a more technical step-by-step for sorting an array in ascending order:
+                    </p>
+                    
+                    <ol>
+                        <li>Iterate from arr[1] to arr[n].</li>
+                        <li>Compare the current elements key to the one on its left.</li>
+                        <li>If the key is smaller than the left one, swap positions with the left element. Repeat until its key is bigger 
+                            than its left neighbour.</li>
+                        <li>Repeat steps 2-3 until whole array is sorted.</li>
+                    </ol>
+                </div>
+
+                <div className={this.setClass("selection", "text")}>
+                    <h1>Selection Sort</h1>
+                    <p>The selection sort algorithm works by splitting up the array into 2 sub-arrays - sorted and unsorted. At first, the 
+                        entire list is unsorted. Then it does the following to sort an array in ascending order:
+                    </p>
+                    <ol>
+                        <li>Find the minimum element in the unsorted sub-array.</li>
+                        <li>Swap that minimum element with the first element in the unsorted sub-array.</li>
+                        <li>Now that recently swapped minimum element is the end of the sorted sub-array.</li>
+                        <li>Repeat steps 1-3 until the whole array is sorted.</li>
+                    </ol>
+                    <p>**NOTE - the animation shows the algorithm scanning the whole array. Then it highlights the minimum element it found and swaps it.</p>
                 </div>
             </div>
         )
