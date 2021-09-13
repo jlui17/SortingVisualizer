@@ -8,7 +8,7 @@ class Slider extends react.Component {
 
     render() {
         return (
-            <input type="range" min={50} max={100} value={this.props.speed} onChange={(e) => {this.props.changeSpeed(e.target.value)}}></input>
+            <input type="range" min={50} max={101} value={this.props.speed} onChange={(e) => {this.props.changeSpeed(e.target.value)}}></input>
         );
     }
 }

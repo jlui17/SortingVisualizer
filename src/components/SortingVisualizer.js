@@ -2,13 +2,16 @@ import react from 'react'
 import * as SortingAlgorithms from './SortingAlgorithms'
 import Slider from './Slider'
 
+const mainColor = "#ECD6A2"
+const complimentColor = "#A2B8EC"
+
 class SortingVisualizer extends react.Component {
     constructor() {
         super();
         this.state = {
             busy: false,
             activeSort: "",
-            speed: 100,
+            speed: 75,
             nums: []
         }
         this.changeSpeed = this.changeSpeed.bind(this);
@@ -99,7 +102,7 @@ class SortingVisualizer extends react.Component {
             bars[i].style.backgroundColor = 'black';
             await this.sleep((100 - this.state.speed));
             // change bar back to normal color
-            bars[i].style.backgroundColor = '#ECD6A2';
+            bars[i].style.backgroundColor = mainColor;
             // step left (down)
             this.step("left", i, numsArr)
             // render change
@@ -109,6 +112,26 @@ class SortingVisualizer extends react.Component {
                 activeSort: this.state.activeSort,
                 nums: numsArr});
         }
+
+        return new Promise(resolve => setTimeout(resolve, this.sleep((100 - this.state.speed)/2)));
+    }
+
+    async findMin(left, right, bars) {
+        // scan through unsorted list once
+        for (let i = left; i < bars.length; i++) {
+            bars[i].style.backgroundColor = complimentColor;
+            await this.sleep((100 - this.state.speed));
+            bars[i].style.backgroundColor = mainColor;
+        }
+
+        // go back to min bar
+        for (let i = 0; i < 3; i++) {
+            bars[right].style.backgroundColor = complimentColor;
+            await this.sleep((100 - this.state.speed)*2);
+            bars[right].style.backgroundColor = mainColor;
+            await this.sleep((100 - this.state.speed)*2);
+        }
+
 
         return new Promise(resolve => setTimeout(resolve, this.sleep((100 - this.state.speed)/2)));
     }
@@ -125,8 +148,8 @@ class SortingVisualizer extends react.Component {
             bars[j].style.backgroundColor = 'black';
             await this.sleep((100 - this.state.speed)/2);
             // change bars back to normal color
-            bars[i].style.backgroundColor = '#ECD6A2';
-            bars[j].style.backgroundColor = '#ECD6A2';
+            bars[i].style.backgroundColor = mainColor;
+            bars[j].style.backgroundColor = mainColor;
             // when both bars will colide in next step
 
             if (i === j + 2 && i > j) {
@@ -165,7 +188,7 @@ class SortingVisualizer extends react.Component {
         while (j !== right) {
             bars[j].style.backgroundColor = 'black';
             await this.sleep((100 - this.state.speed)/2);
-            bars[j].style.backgroundColor = '#ECD6A2';
+            bars[j].style.backgroundColor = mainColor;
             const temp = numsArr[j];
             numsArr[j] = numsArr[j+1];
             numsArr[j+1] = temp;
@@ -193,6 +216,7 @@ class SortingVisualizer extends react.Component {
             nums: this.state.nums
         });
         for (let i = 0; i < animations.length; i++) {
+            await this.findMin(animations[i].left, animations[i].right, bars);
             await this.swap(animations[i].left, animations[i].right, bars);
         }
         this.setState({
@@ -257,6 +281,11 @@ class SortingVisualizer extends react.Component {
 
 
     // RENDERING 
+
+    setTitle() {
+        if (this.state.activeSort === "insertion") return "Insertion Sort";
+        if (this.state.activeSort === "selection") return "Selection Sort";
+    }
 
     setClass(id) {
         if (this.state.activeSort === id) return "active";
